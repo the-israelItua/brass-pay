@@ -1,61 +1,35 @@
-import { useState, useEffect } from "react";
-import { Container, Form } from "./styles";
-import { useBankList, useVerifyBank } from "utils/payments";
+import { useState } from "react";
+import TransferForm from "components/TransferForm";
 import TransferDetails from "components/TransferDetails";
-import TextInput from "components/Input/Text-input";
-import Select from "components/Input/Select";
-import { Button } from "components/Button";
+import { Container } from "./styles";
+import { useVerifyBank } from "utils/payments";
 
 const MakePayment = () => {
-  const [step, setStep] = useState(1);
   const [details, setDetails] = useState({});
-
-  const banks = useBankList();
 
   const [verifyBank, verifyStatus] = useVerifyBank();
 
-  useEffect(() => {});
-  const formattedBanks = banks.map((item) => {
-    return {
-      value: item.code,
-      label: item.name,
-    };
-  });
-
-  const handleVerify = (e) => {
-    e.preventDefault();
-
-    const { recipient_bank, recipient_account_number, amount } =
-      e.target.elements;
-
+  const handleVerify = (account_number, bank_code, amount) => {
+    setDetails({ amount, bank: bank_code });
     verifyBank({
-      recipient_account_number: recipient_account_number.value,
-      recipient_bank: recipient_bank.value,
+      account_number,
+      bank: bank_code,
     });
   };
 
   return (
     <Container>
       <h3>Transfer Funds </h3>
-      {verifyStatus.isSuccess ? (
-        <Form onSubmit={handleVerify}>
-          <Select
-            options={formattedBanks}
-            name="recipient_bank"
-            label="Recipient Bank"
-          />
-          <TextInput
-            name="recipient_account_number"
-            label="Recipient account number"
-            type="number"
-          />
-          <TextInput name="amount" label="Amount to send" />
-          <Button type="submit">
-            {verifyStatus.isLoading ? "Please wait..." : "Continue"}
-          </Button>
-        </Form>
+      {!verifyStatus.isSuccess ? (
+        <TransferForm
+          onSubmit={handleVerify}
+          isLoading={verifyStatus.isLoading}
+        />
       ) : (
-        <TransferDetails details={details} />
+        <TransferDetails
+          details={{ ...verifyStatus.data?.data, ...details }}
+          onCancel={() => verifyStatus.reset()}
+        />
       )}
     </Container>
   );

@@ -6,8 +6,11 @@ const NavWrapper = styled.nav`
   width: 100vw;
   box-shadow: 0px 5px 6px -2px rgba(0, 0, 0, 0.15);
   padding: 2rem;
-  z-index: 100;
+  z-index: 1;
   background: white;
+  @media ${({ theme }) => `${theme.media.sm}`} {
+    width: 100%;
+  }
 `;
 
 const NavHeader = styled(Link)`

@@ -2,6 +2,18 @@ import { useQuery, useMutation } from "react-query";
 import { queryCache } from "react-query";
 import { client } from "utils/api-client";
 
+const useTransactions = (currentPage, pageSize) => {
+  const { data, isLoading } = useQuery({
+    queryKey: ["transactions", currentPage, pageSize],
+    queryFn: () =>
+      client(`transfer?perPage=${pageSize}&page=${currentPage}`).then(
+        (res) => res
+      ),
+  });
+
+  return { transactions: data?.data ?? [], meta: data?.meta ?? [], isLoading };
+};
+
 const useBankList = () => {
   const { data: banks } = useQuery({
     queryKey: "bank-list",
@@ -11,11 +23,35 @@ const useBankList = () => {
 };
 
 const useVerifyBank = () => {
-  return useMutation(({ recipient_account_number, recipient_bank }) =>
-    client(
-      `bank/resolve?account_number=${recipient_account_number}&bank_code=${recipient_bank}`
-    )
+  return useMutation(({ account_number, bank }) =>
+    client(`bank/resolve?account_number=${account_number}&bank_code=${bank}`)
   );
 };
 
-export { useBankList, useVerifyBank };
+const useCreateRecipient = () => {
+  return useMutation((paymentDetails) =>
+    client(`transferrecipient`, paymentDetails)
+  );
+};
+
+const useInitiateTransfer = () => {
+  return useMutation((details) => client(`transfer`, { data: details }));
+};
+
+const useTransfer = () => {
+  return useMutation(
+    (details) => client(`transfer/finalize_transfer`, { data: details }),
+    {
+      onSettled: () => queryCache.invalidateQueries("transactions"),
+    }
+  );
+};
+
+export {
+  useTransactions,
+  useBankList,
+  useVerifyBank,
+  useCreateRecipient,
+  useInitiateTransfer,
+  useTransfer,
+};

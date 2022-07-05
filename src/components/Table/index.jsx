@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { TableWrapper, Table, EmptyTable } from "./styles";
+import Badge from "components/Badge";
 import { Button } from "../Button";
 import Skeleton from "../Skeleton";
 
@@ -41,7 +42,11 @@ const TableGen = ({ data, schema, onRowClick = () => {}, isLoading }) => {
                 {schema &&
                   schema.map((item, index) => (
                     <td key={`table-row-${rowIndex}-data-${index}`}>
-                      {rowData[item?.accessor]}
+                      {item?.accessor === "status" ? (
+                        <Badge>{rowData[item?.accessor]}</Badge>
+                      ) : (
+                        rowData[item?.accessor]
+                      )}
                     </td>
                   ))}
               </tr>
@@ -50,7 +55,7 @@ const TableGen = ({ data, schema, onRowClick = () => {}, isLoading }) => {
             ? Array(10)
                 .fill({})
                 .map((_item, index) => (
-                  <tr>
+                  <tr key={`table-row-data-${index}`}>
                     {schema &&
                       schema.map(() => (
                         <td>

@@ -5,12 +5,12 @@ import {
   Label,
 } from "./styles";
 
-const Select = ({ label, name, value, onChange, options, error }) => {
+const Select = ({ label, name, onChange, options, error }) => {
   return (
     <InputWrapper>
       <Label>{label}</Label>
-      <SelectField name={name}>
-        <option>Select</option>
+      <SelectField name={name} onChange={onChange}>
+        <option value="">Select</option>
         {options.map((item) => (
           <option key={item.value} value={item.value}>
             {item.label}

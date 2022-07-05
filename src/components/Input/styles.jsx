@@ -11,10 +11,6 @@ const InputWrapper = styled.div`
   input {
     height: 3.125rem;
   }
-
-  @media ${({ theme }) => `${theme.media.sm}`} {
-    width: 100%;
-  }
 `;
 
 const InputItemErrorWrapper = styled.div`
@@ -38,6 +34,16 @@ const InputItem = styled.input`
   letter-spacing: 0.1rem;
   &:focus {
     border: 1px solid black;
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &[type="number"] {
+    -moz-appearance: textfield;
   }
 `;
 
@@ -65,4 +71,28 @@ const Label = styled.label`
   font-weight: 700;
 `;
 
-export { InputItem, InputItemErrorWrapper, InputWrapper, SelectField, Label };
+const CurrencyInputItem = styled.div`
+  input {
+    border-radius: 0.2rem;
+    outline: none;
+    margin-bottom: 2rem;
+    border: 1px solid ${({ theme }) => theme.colors.grey100};
+    font-size: 1em;
+    height: 3.125rem;
+    width: 100%;
+    padding: 0 1rem;
+    letter-spacing: 0.1rem;
+    &:focus {
+      border: 1px solid black;
+    }
+  }
+`;
+
+export {
+  InputItem,
+  InputItemErrorWrapper,
+  InputWrapper,
+  SelectField,
+  Label,
+  CurrencyInputItem,
+};
